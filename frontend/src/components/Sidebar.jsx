@@ -23,6 +23,7 @@ function Sidebar() {
                 <Link to="/penggunaan">Penggunaan</Link>
                 <Link to="/tagihan">Tagihan</Link>
                 {isAdmin && <Link to="/users">Manajemen User</Link>}
+                {isAdmin && <Link to="/algoritma">Algoritma (Demo)</Link>}
             </nav>
             <div className="sidebar-user">
                 <span>👤 {user.nama_lengkap} ({user.nama_level})</span>

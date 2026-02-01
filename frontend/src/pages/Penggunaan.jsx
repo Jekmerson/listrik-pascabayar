@@ -19,6 +19,7 @@ function Penggunaan() {
 
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isPelanggan = user.id_level === 2;
+    const canEdit = !isPelanggan;
 
     useEffect(() => {
         fetchPenggunaan();
@@ -100,10 +101,18 @@ function Penggunaan() {
         <div className="container">
             <div className="page-header">
                 <h1>Data Penggunaan Listrik</h1>
-                <button onClick={() => setShowModal(true)} className="btn-primary">
-                    + Tambah Penggunaan
-                </button>
+                {canEdit && (
+                    <button onClick={() => setShowModal(true)} className="btn-primary">
+                        + Tambah Penggunaan
+                    </button>
+                )}
             </div>
+
+            {isPelanggan && (
+                <div className="alert">
+                    Data penggunaan bersifat read-only untuk pelanggan.
+                </div>
+            )}
 
             <table className="data-table">
                 <thead>
@@ -114,7 +123,7 @@ function Penggunaan() {
                         <th>Meter Akhir</th>
                         <th>Jumlah kWh</th>
                         <th>Total Tagihan</th>
-                        <th>Aksi</th>
+                        {canEdit && <th>Aksi</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -126,15 +135,17 @@ function Penggunaan() {
                             <td>{item.meter_akhir}</td>
                             <td>{item.jumlah_kwh} kWh</td>
                             <td>Rp {item.total_tagihan ? parseInt(item.total_tagihan).toLocaleString('id-ID') : '0'}</td>
-                            <td>
-                                <button onClick={() => handleDelete(item.id_penggunaan)} className="btn-delete">Hapus</button>
-                            </td>
+                            {canEdit && (
+                                <td>
+                                    <button onClick={() => handleDelete(item.id_penggunaan)} className="btn-delete">Hapus</button>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            {showModal && (
+            {showModal && canEdit && (
                 <div className="modal">
                     <div className="modal-content">
                         <h2>Tambah Penggunaan Listrik</h2>

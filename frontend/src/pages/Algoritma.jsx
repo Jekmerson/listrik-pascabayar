@@ -2,7 +2,6 @@
  * ALGORITMA PAGE - Demo Sorting & Searching
  */
 import { useState } from 'react';
-import Navbar from '../components/Navbar';
 import api from '../utils/api';
 
 function Algoritma() {
@@ -64,9 +63,7 @@ function Algoritma() {
     };
 
     return (
-        <div>
-            <Navbar />
-            <div className="container">
+        <div className="container">
                 <h1>Demo Algoritma Sorting & Searching</h1>
 
                 {menu === '' && (
@@ -180,7 +177,6 @@ function Algoritma() {
                         <button onClick={() => setMenu('')} className="btn-primary">Kembali ke Menu</button>
                     </div>
                 )}
-            </div>
         </div>
     );
 }

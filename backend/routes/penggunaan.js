@@ -4,13 +4,13 @@
 const express = require('express');
 const router = express.Router();
 const { getAllPenggunaan, createPenggunaan, updatePenggunaan, deletePenggunaan } = require('../controllers/penggunaanController');
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken, isAdmin } = require('../middleware/auth');
 
 router.use(verifyToken);
 
 router.get('/', getAllPenggunaan);
-router.post('/', createPenggunaan);
-router.put('/:id', updatePenggunaan);
-router.delete('/:id', deletePenggunaan);
+router.post('/', isAdmin, createPenggunaan);
+router.put('/:id', isAdmin, updatePenggunaan);
+router.delete('/:id', isAdmin, deletePenggunaan);
 
 module.exports = router;

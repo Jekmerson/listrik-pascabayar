@@ -107,7 +107,9 @@ const isAdminOrOwner = (req, res, next) => {
     }
 
     // Pelanggan hanya bisa akses data sendiri
-    const requestedPelangganId = parseInt(req.params.id_pelanggan || req.query.id_pelanggan);
+    const requestedPelangganId = parseInt(
+        req.params.id_pelanggan || req.params.id || req.query.id_pelanggan
+    );
 
     if (req.user.id_pelanggan === requestedPelangganId) {
         return next();

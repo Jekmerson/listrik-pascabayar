@@ -5,6 +5,9 @@ const express = require('express');
 const router = express.Router();
 const { bubbleSort, bubbleSortByKey } = require('../utils/sorting');
 const { linearSearch, binarySearch } = require('../utils/searching');
+const { verifyToken } = require('../middleware/auth');
+
+router.use(verifyToken);
 
 // POST /api/algoritma/sort - Sorting demo
 router.post('/sort', (req, res) => {

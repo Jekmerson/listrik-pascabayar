@@ -7,6 +7,7 @@ const { promisePool } = require('../config/database');
 const getAllTagihan = async (req, res) => {
     try {
         const { id_pelanggan, bulan, tahun, status_bayar } = req.query;
+        const user = req.user;
 
         let query = `
             SELECT t.*, p.nomor_meter, p.nama_pelanggan, p.alamat
@@ -16,7 +17,13 @@ const getAllTagihan = async (req, res) => {
         `;
         const params = [];
 
-        if (id_pelanggan) {
+        if (user.id_level !== 1) {
+            if (!user.id_pelanggan) {
+                return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+            }
+            query += ' AND t.id_pelanggan = ?';
+            params.push(user.id_pelanggan);
+        } else if (id_pelanggan) {
             query += ' AND t.id_pelanggan = ?';
             params.push(id_pelanggan);
         }
@@ -46,6 +53,7 @@ const getAllTagihan = async (req, res) => {
 // GET tagihan by ID
 const getTagihanById = async (req, res) => {
     try {
+        const user = req.user;
         const [rows] = await promisePool.query(`
             SELECT t.*, p.nomor_meter, p.nama_pelanggan, p.alamat
             FROM tagihan t
@@ -55,6 +63,10 @@ const getTagihanById = async (req, res) => {
 
         if (rows.length === 0) {
             return res.status(404).json({ success: false, message: 'Tagihan tidak ditemukan' });
+        }
+
+        if (user.id_level !== 1 && rows[0].id_pelanggan !== user.id_pelanggan) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
         }
 
         res.json({ success: true, data: rows[0] });
@@ -67,6 +79,24 @@ const getTagihanById = async (req, res) => {
 // UPDATE status pembayaran
 const bayarTagihan = async (req, res) => {
     try {
+        const user = req.user;
+        const [rows] = await promisePool.query(
+            'SELECT id_pelanggan, status_bayar FROM tagihan WHERE id_tagihan = ?',
+            [req.params.id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Tagihan tidak ditemukan' });
+        }
+
+        if (user.id_level !== 1 && rows[0].id_pelanggan !== user.id_pelanggan) {
+            return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+        }
+
+        if (rows[0].status_bayar === 'Sudah Bayar') {
+            return res.status(400).json({ success: false, message: 'Tagihan sudah dibayar' });
+        }
+
         await promisePool.query(
             'UPDATE tagihan SET status_bayar = "Sudah Bayar", tanggal_bayar = NOW() WHERE id_tagihan = ?',
             [req.params.id]

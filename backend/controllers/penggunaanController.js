@@ -7,11 +7,18 @@ const { promisePool } = require('../config/database');
 const getAllPenggunaan = async (req, res) => {
     try {
         const { id_pelanggan, bulan, tahun } = req.query;
+        const user = req.user;
 
         let query = 'SELECT * FROM view_penggunaan_listrik WHERE 1=1';
         const params = [];
 
-        if (id_pelanggan) {
+        if (user.id_level !== 1) {
+            if (!user.id_pelanggan) {
+                return res.status(403).json({ success: false, message: 'Akses ditolak.' });
+            }
+            query += ' AND id_pelanggan = ?';
+            params.push(user.id_pelanggan);
+        } else if (id_pelanggan) {
             query += ' AND id_pelanggan = ?';
             params.push(id_pelanggan);
         }

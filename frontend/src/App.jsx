@@ -61,7 +61,7 @@ function AppContent() {
           <Route path="/pelanggan" element={<AdminRoute><Pelanggan /></AdminRoute>} />
           <Route path="/penggunaan" element={<ProtectedRoute><Penggunaan /></ProtectedRoute>} />
           <Route path="/tagihan" element={<ProtectedRoute><Tagihan /></ProtectedRoute>} />
-          <Route path="/algoritma" element={<ProtectedRoute><Algoritma /></ProtectedRoute>} />
+          <Route path="/algoritma" element={<AdminRoute><Algoritma /></AdminRoute>} />
           <Route path="/users" element={<AdminRoute><Users /></AdminRoute>} />
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>

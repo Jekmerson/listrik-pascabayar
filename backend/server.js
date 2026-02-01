@@ -8,6 +8,7 @@ const { testConnection } = require('./config/database');
 
 // Import routes
 const authRoutes = require('./routes/auth');
+const algoritmaRoutes = require('./routes/algoritma');
 const pelangganRoutes = require('./routes/pelanggan');
 const penggunaanRoutes = require('./routes/penggunaan');
 const tagihanRoutes = require('./routes/tagihan');
@@ -22,8 +23,24 @@ const PORT = process.env.PORT || 5000;
 // ============================================
 
 // CORS - Allow frontend to access API
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: (origin, callback) => {
+        // Allow non-browser requests (like curl/Postman)
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true
 }));
 
@@ -58,6 +75,7 @@ app.get('/', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/algoritma', algoritmaRoutes);
 app.use('/api/pelanggan', pelangganRoutes);
 app.use('/api/penggunaan', penggunaanRoutes);
 app.use('/api/tagihan', tagihanRoutes);
